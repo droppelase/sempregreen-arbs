@@ -30,17 +30,18 @@
     </table>
 
     <script>
-        const API_URL = "https://sempregreen-arbs.onrender.com/arbitrages";
+        const API_URL = "https://sempregreen-arbs.onrender.com/arbitrages"; // Backend correto
 
         async function fetchArbitrages() {
             try {
+                // Faz a requisição sem cache para garantir que os dados sejam atualizados
                 const response = await fetch(API_URL + "?nocache=" + new Date().getTime(), { cache: "no-store" });
                 if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
 
                 const data = await response.json();
                 const tableBody = document.getElementById("arbsTable");
 
-                // Limpa a tabela antes de atualizar os dados
+                // Limpa a tabela antes de adicionar os novos dados
                 tableBody.innerHTML = "";
 
                 data.arbitrages.forEach(arb => {
