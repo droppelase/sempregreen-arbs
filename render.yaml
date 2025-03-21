@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: sempregreen-arbs
+    env: python
+    buildCommand: ""
+    startCommand: python surebet_logger_continuo.py
