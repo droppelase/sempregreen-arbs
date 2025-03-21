@@ -29,26 +29,42 @@
         <tbody id="arbsTable"></tbody>
     </table>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
     <script>
-        const socket = io("https://sempregreen-arbs.onrender.com:10000"); 
+        const API_URL = "https://sempregreen-arbs.onrender.com/arbitrages";
 
-        socket.on("update_arbs", (data) => {
-            const tableBody = document.getElementById("arbsTable");
-            tableBody.innerHTML = "";
+        async function fetchArbitrages() {
+            try {
+                const response = await fetch(API_URL + "?nocache=" + new Date().getTime(), { cache: "no-store" });
+                if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
 
-            data.arbitrages.forEach(arb => {
-                let row = `<tr>
-                    <td>${arb.data}</td>
-                    <td>${arb.evento}</td>
-                    <td>${arb.times}</td>
-                    <td>${arb.liga}</td>
-                    <td>${arb.lucro}</td>
-                    <td>${arb.odds}</td>
-                </tr>`;
-                tableBody.innerHTML += row;
-            });
-        });
+                const data = await response.json();
+                const tableBody = document.getElementById("arbsTable");
+
+                // Limpa a tabela antes de atualizar os dados
+                tableBody.innerHTML = "";
+
+                data.arbitrages.forEach(arb => {
+                    let row = `<tr>
+                        <td>${arb.data}</td>
+                        <td>${arb.evento}</td>
+                        <td>${arb.times}</td>
+                        <td>${arb.liga}</td>
+                        <td>${arb.lucro}</td>
+                        <td>${arb.odds}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+
+            } catch (error) {
+                console.error("Erro ao buscar surebets:", error);
+                document.getElementById("arbsTable").innerHTML = 
+                    "<tr><td colspan='6'>Erro ao carregar os dados.</td></tr>";
+            }
+        }
+
+        // Atualiza os dados a cada 10 segundos
+        setInterval(fetchArbitrages, 10000);
+        fetchArbitrages(); // Carrega os dados ao iniciar
     </script>
 
 </body>
