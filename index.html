@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surebets ao Vivo</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f4; }
+        h1 { color: #2c3e50; }
+        table { width: 80%; margin: auto; border-collapse: collapse; background: white; }
+        th, td { padding: 10px; border: 1px solid #ccc; }
+        th { background: #3498db; color: white; }
+    </style>
+</head>
+<body>
+
+    <h1>Surebets ao Vivo</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Evento</th>
+                <th>Times</th>
+                <th>Liga</th>
+                <th>Lucro</th>
+                <th>Odds</th>
+            </tr>
+        </thead>
+        <tbody id="arbsTable"></tbody>
+    </table>
+
+    <script>
+        async function fetchArbitrages() {
+            const response = await fetch('/arbitrages');
+            const data = await response.json();
+            const tableBody = document.getElementById("arbsTable");
+            tableBody.innerHTML = "";
+            data.arbitrages.forEach(arb => {
+                let row = `<tr>
+                    <td>${arb.data}</td>
+                    <td>${arb.evento}</td>
+                    <td>${arb.times}</td>
+                    <td>${arb.liga}</td>
+                    <td>${arb.lucro}</td>
+                    <td>${arb.odds}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+        setInterval(fetchArbitrages, 60000);
+        fetchArbitrages();
+    </script>
+
+</body>
+</html>
