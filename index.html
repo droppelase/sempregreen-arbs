@@ -31,7 +31,7 @@
 
     <script>
         async function fetchArbitrages() {
-            const response = await fetch('/arbitrages');
+            const response = await fetch('https://sempregreen-arbs.onrender.com/arbitrages');
             const data = await response.json();
             const tableBody = document.getElementById("arbsTable");
             tableBody.innerHTML = "";
@@ -48,7 +48,7 @@
             });
         }
         setInterval(fetchArbitrages, 60000);
-        fetchArbitrages("https://sempregreen-arbs-site.onrender.com");
+        fetchArbitrages();
     </script>
 
 </body>
