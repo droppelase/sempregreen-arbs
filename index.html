@@ -30,19 +30,21 @@
     </table>
 
     <script>
-        const API_URL = "https://sempregreen-arbs.onrender.com/arbitrages"; // Backend correto
+        const API_URL = "https://sempregreen-arbs-site.onrender.com/arbitrages"; // URL correta do backend
 
         async function fetchArbitrages() {
             try {
-                // Faz a requisição sem cache para garantir que os dados sejam atualizados
-                const response = await fetch(API_URL + "?nocache=" + new Date().getTime(), { cache: "no-store" });
+                const response = await fetch(`${API_URL}?_t=${new Date().getTime()}`, { cache: "no-store" });
                 if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
-
+                
                 const data = await response.json();
                 const tableBody = document.getElementById("arbsTable");
+                tableBody.innerHTML = ""; // Limpa a tabela antes de adicionar novas entradas
 
-                // Limpa a tabela antes de adicionar os novos dados
-                tableBody.innerHTML = "";
+                if (data.arbitrages.length === 0) {
+                    tableBody.innerHTML = "<tr><td colspan='6'>Nenhuma arbitragem disponível</td></tr>";
+                    return;
+                }
 
                 data.arbitrages.forEach(arb => {
                     let row = `<tr>
@@ -63,7 +65,7 @@
             }
         }
 
-        // Atualiza os dados a cada 10 segundos
+        // Atualiza a cada 10 segundos
         setInterval(fetchArbitrages, 10000);
         fetchArbitrages(); // Carrega os dados ao iniciar
     </script>
