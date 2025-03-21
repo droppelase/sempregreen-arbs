@@ -34,7 +34,7 @@
 
         async function fetchArbitrages() {
             try {
-                const response = await fetch('https://sempregreen-arbs.onrender.com/arbitrages');
+                const response = await fetch('https://sempregreen-arbs.onrender.com:10000/arbitrages');
                 if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
                 
                 const data = await response.json();
