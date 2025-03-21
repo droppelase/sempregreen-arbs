@@ -26,57 +26,49 @@
                 <th>Odds</th>
             </tr>
         </thead>
-        <tbody id="arbsTable"></tbody>
+        <tbody id="arbsTable">
+            <tr><td colspan="6">Carregando dados...</td></tr>
+        </tbody>
     </table>
 
     <script>
-        let lastArbitrages = new Set(); // Mantém controle das surebets já exibidas
-
         async function fetchArbitrages() {
-    try {
-        const response = await fetch(`https://sempregreen-arbs.onrender.com/arbitrages?nocache=${new Date().getTime()}`, {
-            method: 'GET',
-            headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
-        });
+            try {
+                const response = await fetch('https://sempregreen-arbs.onrender.com/arbitrages', { cache: "no-store" });
+                if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
 
-        if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
-        
-        const data = await response.json();
-        const tableBody = document.getElementById("arbsTable");
+                const data = await response.json();
+                const tableBody = document.getElementById("arbsTable");
+                tableBody.innerHTML = "";
 
-        // Criar novo conjunto de arbitrages
-        let newArbitrages = new Set(data.arbitrages.map(arb => JSON.stringify(arb)));
+                if (data.arbitrages.length === 0) {
+                    tableBody.innerHTML = "<tr><td colspan='6'>Nenhuma arbitragem disponível no momento.</td></tr>";
+                    return;
+                }
 
-        // Se não houver novas surebets, não faz atualização
-        if (newArbitrages.size === 0 || JSON.stringify(newArbitrages) === JSON.stringify(lastArbitrages)) {
-            return;
+                data.arbitrages.forEach(arb => {
+                    let row = `<tr>
+                        <td>${arb.data}</td>
+                        <td>${arb.evento}</td>
+                        <td>${arb.times}</td>
+                        <td>${arb.liga}</td>
+                        <td>${arb.lucro}</td>
+                        <td>${arb.odds}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+
+            } catch (error) {
+                console.error("Erro ao buscar surebets:", error);
+                document.getElementById("arbsTable").innerHTML = 
+                    "<tr><td colspan='6'>Erro ao carregar os dados.</td></tr>";
+            }
         }
 
-        // Atualiza a tabela
-        tableBody.innerHTML = "";
-        data.arbitrages.forEach(arb => {
-            let row = `<tr>
-                <td>${arb.data}</td>
-                <td>${arb.evento}</td>
-                <td>${arb.times}</td>
-                <td>${arb.liga}</td>
-                <td>${arb.lucro}</td>
-                <td>${arb.odds}</td>
-            </tr>`;
-            tableBody.innerHTML += row;
-        });
+        // Atualiza a cada 10 segundos
+        setInterval(fetchArbitrages, 10000);
+        fetchArbitrages();
+    </script>
 
-        // Atualiza o conjunto de arbitrages
-        lastArbitrages = newArbitrages;
-
-    } catch (error) {
-        console.error("Erro ao buscar surebets:", error);
-        document.getElementById("arbsTable").innerHTML = 
-            "<tr><td colspan='6'>Erro ao carregar os dados.</td></tr>";
-    }
-}
-
-// Atualiza a cada 10 segundos
-setInterval(fetchArbitrages, 10000);
-fetchArbitrages();
-
+</body>
+</html>
