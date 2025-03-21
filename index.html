@@ -26,25 +26,25 @@
                 <th>Odds</th>
             </tr>
         </thead>
-        <tbody id="arbsTable">
-            <tr><td colspan="6">Carregando dados...</td></tr>
-        </tbody>
+        <tbody id="arbsTable"></tbody>
     </table>
 
     <script>
         async function fetchArbitrages() {
             try {
-                const response = await fetch('https://sempregreen-arbs.onrender.com/arbitrages', { cache: "no-store" });
+                // Adicionando timestamp na URL para evitar cache
+                const response = await fetch(`https://sempregreen-arbs.onrender.com/arbitrages?t=${new Date().getTime()}`, {
+                    method: 'GET',
+                    headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+                });
+
                 if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
 
                 const data = await response.json();
                 const tableBody = document.getElementById("arbsTable");
-                tableBody.innerHTML = "";
 
-                if (data.arbitrages.length === 0) {
-                    tableBody.innerHTML = "<tr><td colspan='6'>Nenhuma arbitragem disponível no momento.</td></tr>";
-                    return;
-                }
+                // Limpar a tabela antes de adicionar novas entradas
+                tableBody.innerHTML = "";
 
                 data.arbitrages.forEach(arb => {
                     let row = `<tr>
@@ -65,9 +65,9 @@
             }
         }
 
-        // Atualiza a cada 10 segundos
+        // Atualiza a cada 10 segundos sem cache
         setInterval(fetchArbitrages, 10000);
-        fetchArbitrages();
+        fetchArbitrages(); // Carrega os dados ao iniciar
     </script>
 
 </body>
