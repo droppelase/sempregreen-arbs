@@ -2,10 +2,12 @@ from flask import Flask, jsonify, render_template
 import requests
 import json
 from datetime import datetime
+from flask_cors import CORS
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static", static_url_path="")
+CORS(app)  # Permitir requisições do frontend para o backend
 
-# Configurações da API BetBurger
+# Configuração da API do BetBurger
 url = "https://rest-api-lv.betburger.com/api/v1/arbs/pro_search?access_token=a3bcb1c670546b8b3d2d6cb8a92822ec&locale=en"
 
 headers = {
@@ -18,10 +20,10 @@ headers = {
 
 data = """auto_update=true&notification_sound=false&notification_popup=false&show_event_arbs=true&grouped=true&per_page=20&sort_by=percent&koef_format=decimal&mode=&event_id=&q=&is_live=true&event_arb_types[]=1&event_arb_types[]=2&event_arb_types[]=3&event_arb_types[]=4&event_arb_types[]=5&event_arb_types[]=6&event_arb_types[]=7&event_arb_types[]=8&event_arb_types[]=9&event_arb_types[]=10&search_filter[]=1706129&search_filter[]=1706130&search_filter[]=1706131&bk_ids[]=1&bk_ids[]=3&bk_ids[]=8&bk_ids[]=9&bk_ids[]=10&bk_ids[]=11&bk_ids[]=15&bk_ids[]=16&bk_ids[]=18&bk_ids[]=19"""
 
-@app.route('/')
+@app.route("/")
 def home():
-    """Página inicial"""
-    return jsonify({"message": "API de Surebets ativa! Acesse /arbitrages para ver as arbitragens."})
+    """Serve a página HTML"""
+    return app.send_static_file("index.html")
 
 @app.route('/arbitrages', methods=['GET'])
 def get_arbitrages():
