@@ -26,22 +26,29 @@
                 <th>Odds</th>
             </tr>
         </thead>
-        <tbody id="arbsTable"></tbody>
+        <tbody id="arbsTable">
+            <tr><td colspan="6">Carregando surebets...</td></tr>
+        </tbody>
     </table>
 
     <script>
-        const API_URL = "https://sempregreen-arbs-site.onrender.com/arbitrages"; // URL correta do backend
+        const API_URL = "https://sempregreen-arbs.onrender.com/arbitrages"; // Backend correto
 
         async function fetchArbitrages() {
             try {
-                const response = await fetch(`${API_URL}?_t=${new Date().getTime()}`, { cache: "no-store" });
+                // Força a requisição ignorando cache
+                const response = await fetch(`${API_URL}?_t=${new Date().getTime()}`, {
+                    method: 'GET',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
+
                 if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
-                
+
                 const data = await response.json();
                 const tableBody = document.getElementById("arbsTable");
                 tableBody.innerHTML = ""; // Limpa a tabela antes de adicionar novas entradas
 
-                if (data.arbitrages.length === 0) {
+                if (!data.arbitrages || data.arbitrages.length === 0) {
                     tableBody.innerHTML = "<tr><td colspan='6'>Nenhuma arbitragem disponível</td></tr>";
                     return;
                 }
@@ -61,11 +68,11 @@
             } catch (error) {
                 console.error("Erro ao buscar surebets:", error);
                 document.getElementById("arbsTable").innerHTML = 
-                    "<tr><td colspan='6'>Erro ao carregar os dados.</td></tr>";
+                    "<tr><td colspan='6' style='color:red;'>Erro ao carregar os dados.</td></tr>";
             }
         }
 
-        // Atualiza a cada 10 segundos
+        // Atualiza a cada 10 segundos sem precisar de refresh manual
         setInterval(fetchArbitrages, 10000);
         fetchArbitrages(); // Carrega os dados ao iniciar
     </script>
