@@ -4,6 +4,7 @@ from flask_socketio import SocketIO, emit
 import requests
 import json
 import time
+import os
 from threading import Thread
 from datetime import datetime
 
@@ -89,4 +90,5 @@ def get_arbitrages():
 socketio.start_background_task(fetch_and_emit_arbs)
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=10000, allow_unsafe_werkzeug=True)
+    PORT = int(os.environ.get("PORT", 10000))
+    socketio.run(app, host='0.0.0.0', port=PORT, allow_unsafe_werkzeug=True)
