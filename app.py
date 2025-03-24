@@ -1,15 +1,15 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from flask_cors import CORS
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 import requests
-import json
 import time
-import os
 from threading import Thread
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 CORS(app)
+
 socketio = SocketIO(
     app,
     cors_allowed_origins="*",
