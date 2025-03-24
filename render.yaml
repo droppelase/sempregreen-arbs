@@ -2,5 +2,7 @@ services:
   - type: web
     name: sempregreen-arbs
     env: python
-    buildCommand: ""
-    startCommand: python surebet_logger_continuo.py
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    autoDeploy: true
